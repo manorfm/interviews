@@ -1,7 +1,6 @@
 (function () {
   'use strict';
 
-  console.log("porta do servidor hareku", process.env.PORT);
   const port = process.env.NODE_ENV === 'test' ? 3030 : 3003;
 
   const bodyParser = require('body-parser');
@@ -15,7 +14,12 @@
   server.use(allowCors);
   server.use(queryParser());
 
-  server.listen(+process.env.PORT || port, function() {
+  server.set('port', (process.env.PORT || port));
+
+  console.log("porta do servidor hareku", process.env.PORT);
+  console.log("porta selecionada", server.get('port'));
+  
+  server.listen(server.get('port'), function() {
     console.log(`BECKEND is running on port ${port}.`);
   });
 
