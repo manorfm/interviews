@@ -10,6 +10,10 @@
     "test": "gulp test",
     "lint": "gulp lint"
   },
+  "engines": {
+    "node": "v8.5.0",
+    "npm": "5.3.0"
+  },
   "author": "Manoel Medeiros",
   "license": "ISC",
   "dependencies": {
