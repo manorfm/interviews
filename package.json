@@ -4,6 +4,7 @@
   "description": "",
   "main": "loader.js",
   "scripts": {
+    "preinstall": "npm install pm2 -g",
     "dev-simple": "nodemon",
     "dev": "gulp",
     "production": "pm2 start loader.js --name backend",
