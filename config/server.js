@@ -1,5 +1,7 @@
 (function () {
   'use strict';
+
+  console.log("porta do servidor hareku", process.env.PORT);
   const port = process.env.PORT || process.env.NODE_ENV === 'test' ? 3030 : 3003;
 
   const bodyParser = require('body-parser');
