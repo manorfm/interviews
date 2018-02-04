@@ -18,9 +18,9 @@
 
   console.log("porta do servidor hareku", process.env.PORT);
   console.log("porta selecionada", server.get('port'));
-  
+
   server.listen(server.get('port'), function() {
-    console.log(`BECKEND is running on port ${port}.`);
+    console.log(`BECKEND is running on port ${server.get('port')}.`);
   });
 
   module.exports = server;
