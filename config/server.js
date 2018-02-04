@@ -15,7 +15,7 @@
   server.use(allowCors);
   server.use(queryParser());
 
-  server.listen(process.env.PORT || port, function() {
+  server.listen(+process.env.PORT || port, function() {
     console.log(`BECKEND is running on port ${port}.`);
   });
 
