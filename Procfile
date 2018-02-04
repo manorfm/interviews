@@ -1,1 +1,1 @@
-web: npm run production
+worker: node loader.js
