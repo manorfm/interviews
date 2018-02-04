@@ -1,6 +1,6 @@
 (function () {
   'use strict';
-  const port = process.env.NODE_ENV === 'test' ? 3030 : 3003;
+  const port = process.env.PORT || process.env.NODE_ENV === 'test' ? 3030 : 3003;
 
   const bodyParser = require('body-parser');
   const express = require('express');
