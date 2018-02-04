@@ -1,0 +1,40 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "loader.js",
+  "scripts": {
+    "dev-simple": "nodemon",
+    "dev": "gulp",
+    "production": "pm2 start loader.js --name backend",
+    "test": "gulp test",
+    "lint": "gulp lint"
+  },
+  "author": "Manoel Medeiros",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^1.0.3",
+    "body-parser": "^1.16.1",
+    "express": "^4.14.1",
+    "express-query-int": "^2.0.0",
+    "jsonwebtoken": "^8.1.1",
+    "lodash": "^4.17.4",
+    "mongoose": "^5.0.3",
+    "mongoose-paginate": "^5.0.3",
+    "node-restful": "^0.2.6",
+    "pm2": "^2.4.0"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "chai-http": "^3.0.0",
+    "gulp": "^3.9.1",
+    "gulp-jshint": "^2.1.0",
+    "gulp-mocha": "^5.0.0",
+    "gulp-nodemon": "^2.2.1",
+    "jshint": "^2.9.5",
+    "jshint-stylish": "^2.2.1",
+    "jslint": "^0.11.0",
+    "mocha": "^5.0.0",
+    "nodemon": "^1.14.12"
+  }
+}
