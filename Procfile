@@ -1,1 +1,1 @@
-worker: node loader.js
+web: node loader.js
