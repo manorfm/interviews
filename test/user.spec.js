@@ -29,7 +29,6 @@
                     res.body.nome.should.equals("Manoel Medeiros");
                     res.body.email.should.equals("manoel.rodrigo@gmail.com");
                     should.exist(res.body.token);
-                    token = res.body.token;
                     done();
                 });
         });
@@ -44,9 +43,9 @@
                     res.body.nome.should.equals("Manoel Medeiros");
                     res.body.email.should.equals("manoel.rodrigo@gmail.com");
                     should.exist(res.body.token);
-                    
+
                     token = res.body.token;
-                    objectID = res.body._id;
+                    objectID = res.body.id;
 
                     done();
                 });
@@ -157,7 +156,7 @@
         it('Validar sem parâmetros', function (done) {
             chai.request(server)
                 .post('/open/signup')
-                .send({ })
+                .send({})
                 .end(function (err, res) {
                     res.should.be.json;
                     res.should.have.status(412);
@@ -260,6 +259,7 @@
 
     describe('Testar update no usuário cadastrado', function () {
         it('Atualizar nome de Manoel', function (done) {
+            console.log("objectID", objectID)
             chai.request(server)
                 .put(`/api/user/${objectID}`)
                 .send({ "nome": "Manoel Rodrigo Farinha de Medeiros" })
@@ -278,7 +278,7 @@
         it('Adicionando telefones', function (done) {
             chai.request(server)
                 .put(`/api/user/${objectID}`)
-                .send({ "telefones": [{"ddd": 81, "numero": 992684093}]})
+                .send({ "telefones": [{ "ddd": 81, "numero": 992684093 }] })
                 .set('Authorization', 'Bearer ' + token)
                 .end(function (err, res) {
                     res.should.be.json;

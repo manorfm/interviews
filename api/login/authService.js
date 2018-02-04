@@ -31,7 +31,7 @@
 
         User.update({ _id }, { $set: { ultimo_login: Date.now() } }, () => {});
 
-        res.json({  _id, nome, email, telefones, token });
+        res.json({  id: _id, nome, email, telefones, token });
       } else {
         res.status(401).json({ errors: ['Usuário e/ou senha inválidos'] });
       }
