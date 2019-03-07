@@ -3,7 +3,7 @@
 
   const _ = require('lodash');
   const jwt = require('jsonwebtoken');
-  const bcrypt = require('bcrypt');
+  const bcrypt = require('bcrypt-nodejs');
   const env = require('../../.env');
 
   const User = require('../user/user');
@@ -12,26 +12,20 @@
   const emailRegex = /\S+@\S+\.\S+/;
   const passwordRegex = /((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{6,12})/;
 
-  const senderrorsFromDB = (res, dbErrors) => {
-    const errors = [];
-    _.forIn(dbErrors.errors, error => errors.push(error.message));
-    return res.status(412).json({ errors });
-  };
-
   const login = (req, res) => {
     var email = req.body.email || '';
     var senha = req.body.senha || '';
 
     User.findOne({ email }, (err, user) => {
       if (err) {
-        return senderrorsFromDB(res, err);
+        _senderrorsFromDB(res, err);
       } else if (user && bcrypt.compareSync(senha, user.senha)) {
         const token = jwt.sign(user.toJSON(), env.authSecret, { expiresIn: "30 minutes", algorithm: 'HS512' });
         const { _id, nome, email, telefones } = user;
 
-        User.update({ _id }, { $set: { ultimo_login: Date.now() } }, () => {});
+        User.update({ _id }, { $set: { ultimo_login: Date.now() } }, () => { });
 
-        res.json({  id: _id, nome, email, telefones, token });
+        res.json({ id: _id, nome, email, telefones, token });
       } else {
         res.status(401).json({ errors: ['Usuário e/ou senha inválidos'] });
       }
@@ -44,7 +38,7 @@
     const senha = req.body.senha || '';
 
     try {
-      validarCampos(nome, email, senha);
+      _validarCampos(nome, email, senha);
     } catch (err) {
       return res.status(412).send(err);
     }
@@ -54,15 +48,15 @@
 
     User.findOne({ email }, (err, user) => {
       if (err) {
-        return senderrorsFromDB(res, err);
+        return _senderrorsFromDB(res, err);
       } else if (user) {
         return res.status(412).send({ errors: ['Usuário já cadastrado'] });
       } else {
-        const telefones = req.body.telefones || '';
+        const telefones = req.body.telefones || [];
         const newUser = new User({ _id: GenID.generateID(), nome, email, senha: senhaHash, telefones });
         newUser.save(err => {
           if (err) {
-            return senderrorsFromDB(res, err);
+            return _senderrorsFromDB(res, err);
           } else {
             res.status(201);
             login(req, res, next);
@@ -72,22 +66,28 @@
     });
   };
 
-  const validarCampos = (nome, email, senha) => {
+  const _senderrorsFromDB = (res, dbErrors) => {
+    const errors = [];
+    _.forIn(dbErrors.errors, error => errors.push(error.message));
+    return res.status(412).json({ errors });
+  };
+
+  const _validarCampos = (nome, email, senha) => {
     let errors = [];
 
-    const validarEmailRegex = validarRegex(email, emailRegex, 'O e-mail é inválido');
-    const validarSenhaRegex = validarRegex(senha, passwordRegex, 'Senha precisa ter: uma letra maiúscula, uma letra minúscula, um número, um caracter especial e de 8 a 12 caracteres');
+    const validarEmailRegex = _validarRegex(email, emailRegex, 'O e-mail é inválido');
+    const validarSenhaRegex = _validarRegex(senha, passwordRegex, 'Senha precisa ter: uma letra maiúscula, uma letra minúscula, um número, um caracter especial e de 8 a 12 caracteres');
 
-    validar(nome, "O campo 'Nome' não pode ser vazio", errors);
-    validar(email, "O campo 'E-mail' não pode ser vazio", errors, validarEmailRegex);
-    validar(senha, "O campo 'Senha' não pode ser vazio", errors, validarSenhaRegex);
+    _validar(nome, "O campo 'Nome' não pode ser vazio", errors);
+    _validar(email, "O campo 'E-mail' não pode ser vazio", errors, validarEmailRegex);
+    _validar(senha, "O campo 'Senha' não pode ser vazio", errors, validarSenhaRegex);
 
     if (errors.length > 0) {
       throw { errors: errors };
     }
   };
 
-  const validar = (value, message, errors, next) => {
+  const _validar = (value, message, errors, next) => {
     if (!value || value.trim() === '') {
       errors.push(message);
     } else {
@@ -97,10 +97,10 @@
     }
   };
 
-  const validarRegex = (value, regex, message) => {
+  const _validarRegex = (value, regex, message) => {
     return (errors) => {
       if (!value.match(regex)) {
-         errors.push(message);
+        errors.push(message);
       }
     };
   };
