@@ -4,8 +4,6 @@
     process.env.NODE_ENV = 'test';
 
     const mongoose = require("mongoose");
-
-    //Require the dev-dependencies
     const chai = require('chai');
     const chaiHttp = require('chai-http');
     const server = require('../loader');
@@ -259,7 +257,6 @@
 
     describe('Testar update no usuário cadastrado', function () {
         it('Atualizar nome de Manoel', function (done) {
-            console.log("objectID", objectID)
             chai.request(server)
                 .put(`/api/user/${objectID}`)
                 .send({ "nome": "Manoel Rodrigo Farinha de Medeiros" })
