@@ -36,10 +36,5 @@
     next();
   });
 
-  /*   userSchema.post('init', function(result) {
-      console.log('%s has been initialized from the db', result);
-    });
-   */
-
   module.exports = restful.model('User', userSchema);
 }());
