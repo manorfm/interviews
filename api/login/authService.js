@@ -46,7 +46,7 @@
     const salt = bcrypt.genSaltSync();
     const senhaHash = bcrypt.hashSync(senha, salt);
 
-    User.findOne({ email }, (err, user) => {
+    User.findOne({ email }).exec((err, user) => {
       if (err) {
         return _senderrorsFromDB(res, err);
       } else if (user) {
