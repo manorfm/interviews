@@ -6,7 +6,7 @@
     const mongoose = require("mongoose");
     const chai = require('chai');
     const chaiHttp = require('chai-http');
-    const server = require('../loader');
+    const server = require('../../loader');
     const should = chai.should();
     const assert = chai.assert;
 
