@@ -2,3 +2,5 @@
 *.log
 *.package-lock.json
 /database
+.yarnclean
+.vscode
