@@ -1,0 +1,65 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-mongodb
+  labels:
+    app: backend
+spec:
+  ports:
+    - port: 27017
+  selector:
+    app: backend
+    tier: mongodb
+  # clusterIP: None
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongodb-pv-claim
+  labels:
+    app: backend
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: backend-mongodb
+  labels:
+    app: backend
+spec:
+  selector:
+    matchLabels:
+      app: backend
+      tier: mongodb
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: backend
+        tier: mongodb
+    spec:
+      containers:
+      - image: mongo
+        name: mongodb
+        # env:
+        # - name: mongodb_ROOT_PASSWORD
+        #   valueFrom:
+        #     secretKeyRef:
+        #       name: mongodb-pass
+        #       key: password
+        ports:
+        - containerPort: 27017
+          name: mongodb
+        volumeMounts:
+        - name: mongodb-persistent-storage
+          mountPath: /var/lib/mongodb
+      volumes:
+      - name: mongodb-persistent-storage
+        persistentVolumeClaim:
+          claimName: mongodb-pv-claim

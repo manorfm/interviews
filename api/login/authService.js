@@ -18,7 +18,7 @@
 
     User.findOne({ email }, (err, user) => {
       if (err) {
-        _senderrorsFromDB(res, err);
+        _sendErrorsFromDB(res, err);
       } else if (user && bcrypt.compareSync(senha, user.senha)) {
         const token = jwt.sign(user.toJSON(), env.authSecret, { expiresIn: "30 minutes", algorithm: 'HS512' });
         const { _id, nome, email, telefones } = user;
@@ -38,7 +38,7 @@
     const senha = req.body.senha || '';
 
     try {
-      _validarCampos(nome, email, senha);
+      validarCampos(nome, email, senha);
     } catch (err) {
       return res.status(412).send(err);
     }
@@ -48,7 +48,7 @@
 
     User.findOne({ email }).exec((err, user) => {
       if (err) {
-        return _senderrorsFromDB(res, err);
+        return _sendErrorsFromDB(res, err);
       } else if (user) {
         return res.status(412).send({ errors: ['Usuário já cadastrado'] });
       } else {
@@ -56,7 +56,7 @@
         const newUser = new User({ _id: GenID.generateID(), nome, email, senha: senhaHash, telefones });
         newUser.save(err => {
           if (err) {
-            return _senderrorsFromDB(res, err);
+            return _sendErrorsFromDB(res, err);
           } else {
             res.status(201);
             login(req, res, next);
@@ -66,13 +66,13 @@
     });
   };
 
-  const _senderrorsFromDB = (res, dbErrors) => {
+  const _sendErrorsFromDB = (res, err) => {
     const errors = [];
-    _.forIn(dbErrors.errors, error => errors.push(error.message));
+    _.forIn(err.errors, error => errors.push(error.message));
     return res.status(412).json({ errors });
   };
 
-  const _validarCampos = (nome, email, senha) => {
+  const validarCampos = (nome, email, senha) => {
     let errors = [];
 
     const validarEmailRegex = _validarRegex(email, emailRegex, 'O e-mail é inválido');
