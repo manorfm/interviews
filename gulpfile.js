@@ -5,6 +5,8 @@ const nodemon = require('gulp-nodemon');
 const jshint = require('gulp-jshint');
 const mocha = require('gulp-mocha');
 
+const stripCode = require('gulp-strip-code');
+
 gulp.task('lint', 
     gulp.series(() =>
         gulp.src(['./api/**/*.js', './config/**/*.js'])
@@ -19,10 +21,14 @@ gulp.task('test',
         gulp.src(['./test/**/**.spec.js'], {read: false})
             .pipe(mocha({timeout: 3000, recursive: true, exit: true}))
             .on('error', console.error),
-        // gulp.src('./test/**/*.jest.js')
-        //     .pipe(jest({"preprocessorIgnorePatterns": [ "<rootDir>/node_modules/"], "automock": false }))
     ))
 );
+
+gulp.task('build', gulp.series(() => 
+    gulp.src(['./loader.js', './api/**/**.js'])
+        .pipe(stripCode())
+        .pipe(gulp.dest('./dist'))
+))
 
 gulp.task('nodemon', 
     gulp.series((cb) => {

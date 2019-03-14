@@ -38,7 +38,7 @@
     const senha = req.body.senha || '';
 
     try {
-      _validarCampos(nome, email, senha);
+      _validateFields(nome, email, senha);
     } catch (err) {
       return res.status(412).send(err);
     }
@@ -72,38 +72,42 @@
     return res.status(412).json({ errors });
   };
 
-  const _validarCampos = (nome, email, senha) => {
+  const _validateFields = (nome, email, senha) => {
     let errors = [];
 
     const validarEmailRegex = _validarRegex(email, emailRegex, 'O e-mail é inválido');
     const validarSenhaRegex = _validarRegex(senha, passwordRegex, 'Senha precisa ter: uma letra maiúscula, uma letra minúscula, um número, um caracter especial e de 8 a 12 caracteres');
 
-    _validar(nome, "O campo 'Nome' não pode ser vazio", errors);
-    _validar(email, "O campo 'E-mail' não pode ser vazio", errors, validarEmailRegex);
-    _validar(senha, "O campo 'Senha' não pode ser vazio", errors, validarSenhaRegex);
+    _validate(nome, "O campo 'Nome' não pode ser vazio", errors);
+    _validate(email, "O campo 'E-mail' não pode ser vazio", errors, validarEmailRegex);
+    _validate(senha, "O campo 'Senha' não pode ser vazio", errors, validarSenhaRegex);
 
     if (errors.length > 0) {
-      throw { errors: errors };
+      throw { errors };
     }
   };
 
-  const _validar = (value, message, errors, next) => {
+  const _validate = (value, message, errors, next) => {
     if (!value || value.trim() === '') {
       errors.push(message);
-    } else {
-      if (next) {
+    } else if (next) {
         next(errors);
-      }
     }
   };
 
-  const _validarRegex = (value, regex, message) => {
-    return (errors) => {
+  const _validarRegex = (value, regex, message) => 
+    (errors) => {
       if (!value.match(regex)) {
         errors.push(message);
       }
-    };
   };
 
-  module.exports = { login, signup };
+  const api = { login, signup };
+  
+  /* test-code */
+    api['_validateFields'] = _validateFields
+    api['_validate'] = _validate
+  /* end-test-code */
+  
+  module.exports = api
 }());
