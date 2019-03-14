@@ -9,8 +9,8 @@
   const User = require('../user/user');
   const GenID = require('../util/GenID');
 
-  const emailRegex = /\S+@\S+\.\S+/;
-  const passwordRegex = /((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{6,12})/;
+  const EMAIL_REGEX = /\S+@\S+\.\S+/;
+  const PASSWORD_REGEX = /((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{6,12})/;
 
   const login = (req, res) => {
     var email = req.body.email || '';
@@ -75,8 +75,8 @@
   const _validateFields = (nome, email, senha) => {
     let errors = [];
 
-    const validarEmailRegex = _validarRegex(email, emailRegex, 'O e-mail é inválido');
-    const validarSenhaRegex = _validarRegex(senha, passwordRegex, 'Senha precisa ter: uma letra maiúscula, uma letra minúscula, um número, um caracter especial e de 8 a 12 caracteres');
+    const validarEmailRegex = _validateByRegex(email, EMAIL_REGEX, 'O e-mail é inválido');
+    const validarSenhaRegex = _validateByRegex(senha, PASSWORD_REGEX, 'Senha precisa ter: uma letra maiúscula, uma letra minúscula, um número, um caracter especial e de 8 a 12 caracteres');
 
     _validate(nome, "O campo 'Nome' não pode ser vazio", errors);
     _validate(email, "O campo 'E-mail' não pode ser vazio", errors, validarEmailRegex);
@@ -95,7 +95,7 @@
     }
   };
 
-  const _validarRegex = (value, regex, message) => 
+  const _validateByRegex = (value, regex, message) => 
     (errors) => {
       if (!value.match(regex)) {
         errors.push(message);
@@ -107,6 +107,9 @@
   /* test-code */
     api['_validateFields'] = _validateFields
     api['_validate'] = _validate
+    api['_validateByRegex'] = _validateByRegex
+    api['EMAIL_REGEX'] = EMAIL_REGEX
+    api['PASSWORD_REGEX'] = PASSWORD_REGEX
   /* end-test-code */
   
   module.exports = api

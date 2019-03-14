@@ -83,7 +83,7 @@ describe('Testing private _validate of auth.service', () => {
     })
 })
 
-describe.only('Testing private _validateFields of auth.service', () => {
+describe('Testing private _validateFields of auth.service', () => {
     it('Should not be undefined the fields name, email and password', () => {
         const name = undefined
         const email = undefined
@@ -175,8 +175,101 @@ describe.only('Testing private _validateFields of auth.service', () => {
     })
 })
 
+describe('Test the regexes to validate email', () => {
+    it('Should not be empty', () => {
+        const erroMessage = 'value cannot be empty'
+        const validate = authService._validateByRegex('', authService.EMAIL_REGEX, erroMessage)
+        const errors = []
+       
+        validate(errors)
+       
+        expect(errors).to.have.lengthOf(1)
+        expect(errors).to.deep.equal([erroMessage])
+    })
+    it('Should not be without @', () => {
+        const erroMessage = 'value cannot be without @'
+        const validate = authService._validateByRegex('teste.com', authService.EMAIL_REGEX, erroMessage)
+        const errors = []
+        
+        validate(errors)
+        
+        expect(errors).to.have.lengthOf(1)
+        expect(errors).to.deep.equal([erroMessage])
+    })
+    it('Should be at least be like xxxx@doman.somehting', () => {
+        const erroMessage = 'the value should have xxxx@doman.somehting'
+        const validate = authService._validateByRegex('teste@test.com', authService.EMAIL_REGEX, erroMessage)
+        const errors = []
+        
+        validate(errors)
+        
+        expect(errors).to.be.empty
+    })
+})
+
+describe('Test the regexes to validate password', () => {
+    it('Should not be empty', () => {
+        const erroMessage = 'password cannot be emnpty'
+        const validate = authService._validateByRegex('', authService.PASSWORD_REGEX, erroMessage)
+        const errors = []
+       
+        validate(errors)
+       
+        expect(errors).to.have.lengthOf(1)
+        expect(errors).to.deep.equal([erroMessage])
+    })
+    it('Should have at least one lowercase character', () => {
+        const erroMessage = 'must have at last one lowercase character'
+        const validate = authService._validateByRegex('P@SSWORD1', authService.PASSWORD_REGEX, erroMessage)
+        const errors = []
+        
+        validate(errors)
+        
+        expect(errors).to.have.lengthOf(1)
+        expect(errors).to.deep.equal([erroMessage])
+    })
+    it('Should have at least one uppercase character', () => {
+        const erroMessage = 'must have at last one uppercase character'
+        const validate = authService._validateByRegex('p@ssword1', authService.PASSWORD_REGEX, erroMessage)
+        const errors = []
+        
+        validate(errors)
+        
+        expect(errors).to.have.lengthOf(1)
+        expect(errors).to.deep.equal([erroMessage])
+    })
+    it('Should have at least one numeral character', () => {
+        const erroMessage = 'must have at last one numeral character'
+        const validate = authService._validateByRegex('p@ssword', authService.PASSWORD_REGEX, erroMessage)
+        const errors = []
+        
+        validate(errors)
+        
+        expect(errors).to.have.lengthOf(1)
+        expect(errors).to.deep.equal([erroMessage])
+    })
+    it('Should have at least one special character', () => {
+        const erroMessage = 'must have at last one special character'
+        const validate = authService._validateByRegex('Passwor1', authService.PASSWORD_REGEX, erroMessage)
+        const errors = []
+        
+        validate(errors)
+        
+        expect(errors).to.have.lengthOf(1)
+        expect(errors).to.deep.equal([erroMessage])
+    })
+    it('Should to pass with all aggreements accomplished', () => {
+        const validate = authService._validateByRegex('P@ssword1', authService.PASSWORD_REGEX)
+        const errors = []
+        
+        validate(errors)
+        
+        expect(errors).to.be.empty
+    })
+})
+
 describe('Testing signup', () => {
-    it('Should check for already stored user', () => {
+    it('Should check if the user already exists', () => {
         const res = new ResponseMock()
         const statusSpy = sinon.spy(res, 'status')
         const sendSpy = sinon.spy(res, 'send')
