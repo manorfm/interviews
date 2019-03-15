@@ -47,6 +47,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/manorfm/node-backend.git"
+    "url": "git://github.com/manorfm/user-service.git"
   }
 }

@@ -23,7 +23,7 @@
         const token = jwt.sign(user.toJSON(), env.authSecret, { expiresIn: "30 minutes", algorithm: 'HS512' });
         const { _id, nome, email, telefones } = user;
 
-        User.update({ _id }, { $set: { ultimo_login: Date.now() } }, () => { });
+        User.updateOne({ _id }, { $set: { ultimo_login: Date.now() } }, () => { });
 
         res.json({ id: _id, nome, email, telefones, token });
       } else {
@@ -40,6 +40,7 @@
     try {
       _validateFields(nome, email, senha);
     } catch (err) {
+      console.log("@@@", err)
       return res.status(412).send(err);
     }
 
@@ -88,7 +89,7 @@
   };
 
   const _validate = (value, message, errors, next) => {
-    if (!value || value.trim() === '') {
+    if (!value || (typeof value === 'string' && value.trim() === '')) {
       errors.push(message);
     } else if (next) {
         next(errors);
@@ -97,7 +98,7 @@
 
   const _validateByRegex = (value, regex, message) => 
     (errors) => {
-      if (!value.match(regex)) {
+      if (!(typeof value === 'string' && value.match(regex))) {
         errors.push(message);
       }
   };

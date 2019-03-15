@@ -81,6 +81,21 @@ describe('Testing private _validate of auth.service', () => {
         expect(errors).to.be.not.empty
         expect(errors).to.be.length(1)
     })
+    it('Validate field different without next', () => {
+        let value = 'not empty anymore'
+        const errors = ['Other fieald had a error']
+        authService._validate(value, 'Field cannot be empty', errors)
+        
+        expect(errors).to.be.not.empty
+        expect(errors).to.be.length(1)
+    })
+    it('Validate field is a number', () => {
+        let value = 1234
+        const errors = []
+        authService._validate(value, 'Field cannot be empty', errors)
+        
+        expect(errors).to.be.empty
+    })
 })
 
 describe('Testing private _validateFields of auth.service', () => {
