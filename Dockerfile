@@ -3,11 +3,10 @@ FROM node:8.15.0-alpine
 
 WORKDIR /usr/app
 
-COPY package.json loader.js gulpfile.js .env ./
+COPY package.json ./
 RUN npm install pm2 -g && npm install --quiet --production
 
-COPY api ./api/
-COPY config ./config/
+COPY dist ./
 ENV ENV_DATABASE_URL $DATABASE_URL
 EXPOSE 3003
 

@@ -24,16 +24,17 @@ gulp.task('test',
     ))
 );
 
-gulp.task('build', gulp.series(() => 
-    gulp.src(['./loader.js', './api/**/**.js'])
-        .pipe(stripCode())
-        .pipe(gulp.dest('./dist'))
+gulp.task('build', 
+    gulp.series(() => 
+        gulp.src(['./loader.js', './.env', './config*/**/*', './api*/**/*'])
+            .pipe(stripCode({keep_comments: false}))
+            .pipe(gulp.dest('./dist'))
 ))
 
 gulp.task('nodemon', 
     gulp.series((cb) => {
-        var started = false;
-        return nodemon({ script: 'loader.js' })
+        let started = false;
+        return nodemon({ script: 'loader.js' , env: { 'ENV_DATABASE_URL': 'localhost' }})
             .on('start', () => {
                 if (!started) {
                     cb();
@@ -43,4 +44,4 @@ gulp.task('nodemon',
     })
 );
 
-gulp.task('default', gulp.series('nodemon', () => { }));
+gulp.task('default', gulp.series('nodemon'));
