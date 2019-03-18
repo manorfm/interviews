@@ -3,9 +3,12 @@
 
   const express = require('express');
   const auth = require('./auth');
-  
-  module.exports = function(server) {
 
+  /* test-code */
+  const expressListRoutes   = require('express-list-routes');
+  /* end-test-code */
+
+  module.exports = function(server) {
     //Rotas abertas
     const openAPI = express.Router();
     server.use('/open', openAPI);
@@ -21,6 +24,11 @@
 
     // rotas da API
     const userService = require('../api/user/userService');
-    userService.register(closedAPI, '/user'); 
+    userService.register(closedAPI, '/users');
+
+    /* test-code */
+    expressListRoutes({}, 'OPEN:', openAPI );
+    expressListRoutes({}, 'CLOSED:', closedAPI );
+    /* end-test-code */
   };
 }());
