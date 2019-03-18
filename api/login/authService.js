@@ -40,7 +40,6 @@
     try {
       _validateFields(nome, email, senha);
     } catch (err) {
-      console.log("@@@", err)
       return res.status(412).send(err);
     }
 
@@ -106,12 +105,12 @@
   const api = { login, signup };
   
   /* test-code */
-    api['_validateFields'] = _validateFields
-    api['_validate'] = _validate
-    api['_validateByRegex'] = _validateByRegex
-    api['EMAIL_REGEX'] = EMAIL_REGEX
-    api['PASSWORD_REGEX'] = PASSWORD_REGEX
+    api._validateFields = _validateFields;
+    api._validate = _validate;
+    api._validateByRegex = _validateByRegex;
+    api.EMAIL_REGEX = EMAIL_REGEX;
+    api.PASSWORD_REGEX = PASSWORD_REGEX;
   /* end-test-code */
   
-  module.exports = api
+  module.exports = api;
 }());
