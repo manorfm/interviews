@@ -1,58 +1,51 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: backend-mongodb
+  name: mongodb
   labels:
-    app: backend
+    app: mongodb
 spec:
   ports:
     - port: 27017
   selector:
-    app: backend
-    tier: mongodb
-  # clusterIP: None
+    app: mongodb
+    tier: user
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: mongodb-pv-claim
   labels:
-    app: backend
+    app: mongodb
 spec:
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 20Gi
+      storage: 1Gi
 ---
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
-  name: backend-mongodb
+  name: mongodb
   labels:
-    app: backend
+    app: mongodb
 spec:
   selector:
     matchLabels:
-      app: backend
-      tier: mongodb
+      app: mongodb
+      tier: user
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: backend
-        tier: mongodb
+        app: mongodb
+        tier: user
     spec:
       containers:
       - image: mongo
         name: mongodb
-        # env:
-        # - name: mongodb_ROOT_PASSWORD
-        #   valueFrom:
-        #     secretKeyRef:
-        #       name: mongodb-pass
-        #       key: password
         ports:
         - containerPort: 27017
           name: mongodb
