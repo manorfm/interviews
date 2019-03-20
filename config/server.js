@@ -9,16 +9,21 @@
   const allowCors = require('./cors');
   const queryParser = require('express-query-int');
 
-  // server.use(bodyParser.urlencoded({extended : true}))
+  const { createLightship } = require('lightship');
+  const lightship = createLightship();
+
   server.use(bodyParser.json());
   server.use(allowCors);
   server.use(queryParser());
 
   server.set('port', (process.env.PORT || port));
 
-  server.listen(server.get('port'), function() {
+  server.listen(server.get('port'), () => {
+    lightship.signalReady();
     console.log(`BECKEND is running on port ${server.get('port')}.`);
   });
+
+  lightship.registerShutdownHandler(() => server.close());
 
   module.exports = server;
 }());

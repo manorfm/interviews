@@ -50,7 +50,7 @@
         });
         it('Recuperar a lista de usuários, com apenas 1 elemento', function (done) {
             chai.request(server)
-                .get('/api/user')
+                .get('/api/users')
                 .set('Authorization', 'Bearer ' + token)
                 .end(function (err, res) {
                     res.should.be.json;
@@ -231,7 +231,7 @@
         });
         it('Validar acesso não autorizado', function (done) {
             chai.request(server)
-                .get('/api/user')
+                .get('/api/users')
                 .end(function (err, res) {
                     res.should.be.json;
                     res.should.have.status(403);
@@ -245,7 +245,7 @@
         });
         it('Validar usuário inexistente', function (done) {
             chai.request(server)
-                .get(`/api/user/5ac50e4189dfba1f58ad6902`)
+                .get(`/api/users/5ac50e4189dfba1f58ad6902`)
                 .set('Authorization', 'Bearer ' + token)
                 .end(function (err, res) {
                     res.should.be.json;
@@ -258,7 +258,7 @@
     describe('Testar update no usuário cadastrado', function () {
         it('Atualizar nome de Manoel', function (done) {
             chai.request(server)
-                .put(`/api/user/${objectID}`)
+                .put(`/api/users/${objectID}`)
                 .send({ "nome": "Manoel Rodrigo Farinha de Medeiros" })
                 .set('Authorization', 'Bearer ' + token)
                 .end(function (err, res) {
@@ -274,7 +274,7 @@
 
         it('Adicionando telefones', function (done) {
             chai.request(server)
-                .put(`/api/user/${objectID}`)
+                .put(`/api/users/${objectID}`)
                 .send({ "telefones": [{ "ddd": 81, "numero": 992684093 }] })
                 .set('Authorization', 'Bearer ' + token)
                 .end(function (err, res) {
@@ -293,7 +293,7 @@
         });
         it('Verificando atualização de telefones', function (done) {
             chai.request(server)
-                .get(`/api/user/${objectID}`)
+                .get(`/api/users/${objectID}`)
                 .set('Authorization', 'Bearer ' + token)
                 .end(function (err, res) {
                     res.should.be.json;
@@ -315,7 +315,7 @@
     describe('Testar remoção do usuário', function () {
         it('removendo o usuário Manoel', function (done) {
             chai.request(server)
-                .del(`/api/user/${objectID}`)
+                .del(`/api/users/${objectID}`)
                 .set('Authorization', 'Bearer ' + token)
                 .end(function (err, res) {
                     res.should.have.status(204);
@@ -324,7 +324,7 @@
         });
         it('Verificando a inexistência do usuário', function (done) {
             chai.request(server)
-                .get(`/api/user/${objectID}`)
+                .get(`/api/users/${objectID}`)
                 .set('Authorization', 'Bearer ' + token)
                 .end(function (err, res) {
                     res.should.be.json;

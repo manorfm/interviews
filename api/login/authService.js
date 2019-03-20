@@ -9,8 +9,8 @@
   const User = require('../user/user');
   const GenID = require('../util/GenID');
 
-  const emailRegex = /\S+@\S+\.\S+/;
-  const passwordRegex = /((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{6,12})/;
+  const EMAIL_REGEX = /\S+@\S+\.\S+/;
+  const PASSWORD_REGEX = /((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{6,12})/;
 
   const login = (req, res) => {
     var email = req.body.email || '';
@@ -23,7 +23,7 @@
         const token = jwt.sign(user.toJSON(), env.authSecret, { expiresIn: "30 minutes", algorithm: 'HS512' });
         const { _id, nome, email, telefones } = user;
 
-        User.update({ _id }, { $set: { ultimo_login: Date.now() } }, () => { });
+        User.updateOne({ _id }, { $set: { ultimo_login: Date.now() } }, () => { });
 
         res.json({ id: _id, nome, email, telefones, token });
       } else {
@@ -38,7 +38,7 @@
     const senha = req.body.senha || '';
 
     try {
-      validarCampos(nome, email, senha);
+      _validateFields(nome, email, senha);
     } catch (err) {
       return res.status(412).send(err);
     }
@@ -72,38 +72,46 @@
     return res.status(412).json({ errors });
   };
 
-  const validarCampos = (nome, email, senha) => {
+  const _validateFields = (nome, email, senha) => {
+
     let errors = [];
 
-    const validarEmailRegex = _validarRegex(email, emailRegex, 'O e-mail é inválido');
-    const validarSenhaRegex = _validarRegex(senha, passwordRegex, 'Senha precisa ter: uma letra maiúscula, uma letra minúscula, um número, um caracter especial e de 8 a 12 caracteres');
+    const validarEmailRegex = _validateByRegex(email, EMAIL_REGEX, 'O e-mail é inválido');
+    const validarSenhaRegex = _validateByRegex(senha, PASSWORD_REGEX, 'Senha precisa ter: uma letra maiúscula, uma letra minúscula, um número, um caracter especial e de 8 a 12 caracteres');
 
-    _validar(nome, "O campo 'Nome' não pode ser vazio", errors);
-    _validar(email, "O campo 'E-mail' não pode ser vazio", errors, validarEmailRegex);
-    _validar(senha, "O campo 'Senha' não pode ser vazio", errors, validarSenhaRegex);
+    _validate(nome, "O campo 'Nome' não pode ser vazio", errors);
+    _validate(email, "O campo 'E-mail' não pode ser vazio", errors, validarEmailRegex);
+    _validate(senha, "O campo 'Senha' não pode ser vazio", errors, validarSenhaRegex);
 
     if (errors.length > 0) {
-      throw { errors: errors };
+      throw { errors };
     }
   };
 
-  const _validar = (value, message, errors, next) => {
-    if (!value || value.trim() === '') {
+  const _validate = (value, message, errors, next) => {
+    if (!value || (typeof value === 'string' && value.trim() === '')) {
       errors.push(message);
-    } else {
-      if (next) {
+    } else if (next) {
         next(errors);
-      }
     }
   };
 
-  const _validarRegex = (value, regex, message) => {
-    return (errors) => {
-      if (!value.match(regex)) {
+  const _validateByRegex = (value, regex, message) => 
+    (errors) => {
+      if (!(typeof value === 'string' && value.match(regex))) {
         errors.push(message);
       }
-    };
   };
 
-  module.exports = { login, signup };
+  const api = { login, signup };
+  
+  /* test-code */
+    api._validateFields = _validateFields;
+    api._validate = _validate;
+    api._validateByRegex = _validateByRegex;
+    api.EMAIL_REGEX = EMAIL_REGEX;
+    api.PASSWORD_REGEX = PASSWORD_REGEX;
+  /* end-test-code */
+  
+  module.exports = api;
 }());
