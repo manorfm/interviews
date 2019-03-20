@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  labels:
+    app: backend
+spec:
+  ports:
+    - port: 3001
+  selector:
+    app: backend
+    tier: user_service
+  # type: LoadBalancer
+  type: LoadBalancer
+---
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: backend
+  labels:
+    app: backend
+spec:
+  selector:
+    matchLabels:
+      app: backend
+      tier: user_service
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: backend
+        tier: user_service
+    spec:
+      containers:
+      - image: manorfm/nodebackend
+        name: backend
+        imagePullPolicy: IfNotPresent
+        # env:
+        # - name: backend_DB_HOST
+        #   value: backend-mysql
+        # - name: backend_DB_PASSWORD
+        #   valueFrom:
+        #     secretKeyRef:
+        #       name: mysql-pass
+        #       key: password
+        ports:
+        - containerPort: 3001
+          name: backend
